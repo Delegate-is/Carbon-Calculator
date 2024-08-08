@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Carbon Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .form-group div {
+            flex: 1;
+            margin: 0 10px;
+        }
+        .form-group div input, .form-group div select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group div label {
+            font-weight: bold;
+            color: #555;
+        }
+        .form-group div button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .results {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .results div {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Personal Carbon Calculator App ⚠️</h1>
+        <form action="/calculate" method="post">
+            <div class="form-group">
+                <div>
+                    <label for="country">🌍 Your Country</label>
+                    <select name="country" id="country">
+                        <option value="India">India</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <label for="distance">🚗 Daily commute distance (in km)</label>
+                    <input type="number" name="distance" id="distance" step="0.1">
+                </div>
+                <div>
+                    <label for="electricity">💡 Monthly electricity consumption (in kWh)</label>
+                    <input type="number" name="electricity" id="electricity" step="0.1">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <label for="waste">🗑️ Waste generated per week (in kg)</label>
+                    <input type="number" name="waste" id="waste" step="0.1">
+                </div>
+                <div>
+                    <label for="meals">🍽️ Number of meals per day</label>
+                    <input type="number" name="meals" id="meals" step="1">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div>
+                    <button type="submit">Calculate CO2 Emissions</button>
+                </div>
+            </div>
+        </form>
+
+        {% if total_emissions is not none %}
+        <div class="results">
+            <h2>Results</h2>
+            <div>
+                <h3>Carbon Emissions by Category</h3>
+                <p>🚗 Transportation: {{ transportation_emissions }} tonnes CO2 per year</p>
+                <p>💡 Electricity: {{ electricity_emissions }} tonnes CO2 per year</p>
+                <p>🍽️ Diet: {{ diet_emissions }} tonnes CO2 per year</p>
+                <p>🗑️ Waste: {{ waste_emissions }} tonnes CO2 per year</p>
+            </div>
+            <div>
+                <h3>Total Carbon Footprint</h3>
+                <p>🌍 Your total carbon footprint is: {{ total_emissions }} tonnes CO2 per year</p>
+                <p>In 2021, CO2 emissions per capita for India was 1.9 tons of CO2 per capita. Between 1972 and 2021, CO2 emissions per capita of India grew substantially from 0.39 to 1.9 tons of CO2 per capita rising at an increasing annual rate that reached a maximum of 9.41% in 2021.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
