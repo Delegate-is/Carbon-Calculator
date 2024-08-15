@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Your Carbon Footprint Results</h2>
+<div>
+    <p>House Emissions: {{ house_emissions }} tonnes CO2</p>
+    <p>Flight Emissions: {{ flight_emissions }} tonnes CO2</p>
+    <p>Car Emissions: {{ car_emissions }} tonnes CO2</p>
+    <p>Bus & Rail Emissions: {{ bus_rail_emissions }} tonnes CO2</p>
+    <p>Secondary Emissions: {{ secondary_emissions }} tonnes CO2</p>
+    <h3>Total Emissions: {{ total_emissions }} tonnes CO2</h3>
+    <h3>Average Emissions in Your Country: {{ average_country }} tonnes CO2</h3>
+    <h3>Comparison: 
+        {% if total_emissions > average_country %}
+            Your emissions are higher than the average in your country.
+        {% else %}
+            Your emissions are lower than the average in your country. Good job!
+        {% endif %}
+    </h3>
+</div>
+<div>
+    <h3>Recommendations to Reduce Your Carbon Footprint</h3>
+    <ul>
+        <li>Consider reducing your electricity consumption by switching to energy-efficient appliances.</li>
+        <li>Use public transportation or carpool whenever possible.</li>
+        <li>Reduce waste by recycling and composting more.</li>
+        <li>Opt for eco-friendly products and services.</li>
+    </ul>
+</div>
+{% endblock %}

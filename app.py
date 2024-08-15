@@ -1,61 +1,80 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-# Define emission factors (example values, replace with accurate data)
+# Placeholder emission factors (tonnes CO2 per unit)
 EMISSION_FACTORS = {
-    "India": {
-        "Transportation": 0.14,  # kgCO2/km
-        "Electricity": 0.82,  # kgCO2/kWh
-        "Diet": 1.25,  # kgCO2/meal, 2.5kgco2/kg
-        "Waste": 0.1  # kgCO2/kg
-    }
+    'electricity': 0.45,
+    'gas': 2.1,
+    'flights': 0.2,
+    'car': 0.14,
+    'bus_rail': 0.05,
+    'secondary': 1.5,  # Arbitrary value for shopping, entertainment, etc.
+    'average_country': 2.0,  # Average tonnes CO2 per capita
 }
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/calculate', methods=['POST'])
-def calculate_footprint():
-    try:
-        country = request.form.get('country')
-        distance = float(request.form.get('distance', 0))
+@app.route('/house', methods=['GET', 'POST'])
+def house():
+    if request.method == 'POST':
         electricity = float(request.form.get('electricity', 0))
-        waste = float(request.form.get('waste', 0))
-        meals = int(request.form.get('meals', 0))
+        gas = float(request.form.get('gas', 0))
+        house_emissions = (electricity * EMISSION_FACTORS['electricity']) + (gas * EMISSION_FACTORS['gas'])
+        return redirect(url_for('results', house_emissions=house_emissions))
+    return render_template('house.html')
 
-        # Normalize inputs
-        distance = distance * 365  # Convert daily distance to yearly
-        electricity = electricity * 12  # Convert monthly electricity to yearly
-        meals = meals * 365  # Convert daily meals to yearly
-        waste = waste * 52  # Convert weekly waste to yearly
+@app.route('/flights', methods=['GET', 'POST'])
+def flights():
+    if request.method == 'POST':
+        flights = int(request.form.get('flights', 0))
+        flight_emissions = flights * EMISSION_FACTORS['flights']
+        return redirect(url_for('results', flight_emissions=flight_emissions))
+    return render_template('flights.html')
 
-        # Calculate carbon emissions
-        transportation_emissions = EMISSION_FACTORS[country]["Transportation"] * distance
-        electricity_emissions = EMISSION_FACTORS[country]["Electricity"] * electricity
-        diet_emissions = EMISSION_FACTORS[country]["Diet"] * meals
-        waste_emissions = EMISSION_FACTORS[country]["Waste"] * waste
+@app.route('/car', methods=['GET', 'POST'])
+def car():
+    if request.method == 'POST':
+        distance = float(request.form.get('distance', 0))
+        car_emissions = distance * EMISSION_FACTORS['car']
+        return redirect(url_for('results', car_emissions=car_emissions))
+    return render_template('car.html')
 
-        # Convert emissions to tonnes and round off to 2 decimal points
-        transportation_emissions = round(transportation_emissions / 1000, 2)
-        electricity_emissions = round(electricity_emissions / 1000, 2)
-        diet_emissions = round(diet_emissions / 1000, 2)
-        waste_emissions = round(waste_emissions / 1000, 2)
+@app.route('/bus_rail', methods=['GET', 'POST'])
+def bus_rail():
+    if request.method == 'POST':
+        distance = float(request.form.get('distance', 0))
+        bus_rail_emissions = distance * EMISSION_FACTORS['bus_rail']
+        return redirect(url_for('results', bus_rail_emissions=bus_rail_emissions))
+    return render_template('bus_rail.html')
 
-        # Calculate total emissions
-        total_emissions = round(
-            transportation_emissions + electricity_emissions + diet_emissions + waste_emissions, 2
-        )
+@app.route('/secondary', methods=['GET', 'POST'])
+def secondary():
+    if request.method == 'POST':
+        expense = float(request.form.get('expense', 0))
+        secondary_emissions = expense * EMISSION_FACTORS['secondary']
+        return redirect(url_for('results', secondary_emissions=secondary_emissions))
+    return render_template('secondary.html')
 
-        return render_template('index.html', total_emissions=total_emissions,
-                               transportation_emissions=transportation_emissions,
-                               electricity_emissions=electricity_emissions,
-                               diet_emissions=diet_emissions, waste_emissions=waste_emissions)
+@app.route('/results')
+def results():
+    house_emissions = float(request.args.get('house_emissions', 0))
+    flight_emissions = float(request.args.get('flight_emissions', 0))
+    car_emissions = float(request.args.get('car_emissions', 0))
+    bus_rail_emissions = float(request.args.get('bus_rail_emissions', 0))
+    secondary_emissions = float(request.args.get('secondary_emissions', 0))
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
+    total_emissions = house_emissions + flight_emissions + car_emissions + bus_rail_emissions + secondary_emissions
+
+    return render_template('results.html', total_emissions=total_emissions,
+                           house_emissions=house_emissions,
+                           flight_emissions=flight_emissions,
+                           car_emissions=car_emissions,
+                           bus_rail_emissions=bus_rail_emissions,
+                           secondary_emissions=secondary_emissions,
+                           average_country=EMISSION_FACTORS['average_country'])
 
 if __name__ == '__main__':
     app.run(debug=True)
-

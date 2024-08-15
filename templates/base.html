@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Carbon Calculator</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Welcome</a>
+            <a href="{{ url_for('house') }}">House</a>
+            <a href="{{ url_for('flights') }}">Flights</a>
+            <a href="{{ url_for('car') }}">Car</a>
+            <a href="{{ url_for('bus_rail') }}">Bus & Rail</a>
+            <a href="{{ url_for('secondary') }}">Secondary</a>
+            <a href="{{ url_for('results') }}">Results</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
